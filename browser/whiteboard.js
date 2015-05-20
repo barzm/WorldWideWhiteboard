@@ -94,8 +94,7 @@ window.whiteboard = new window.EventEmitter();
         // If shouldBroadcast is truthy, we will emit a draw event to listeners
         // with the start, end and color data.
         if (shouldBroadcast) {
-            strokeColor = strokeColor || 'black';
-            whiteboard.emit('draw', start, end, strokeColor);
+            whiteboard.emit('draw', start, end, strokeColor || 'black');
         }
         
     };

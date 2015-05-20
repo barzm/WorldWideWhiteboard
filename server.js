@@ -5,29 +5,26 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server); 
 var bodyparser = require('body-parser');
 
-server.listen(1337, function () {
-});
+server.listen(1337)
 app.use(bodyparser.urlencoded({extended:false}))
 app.use(express.static(path.join(__dirname, 'browser')));
 
-
 app.get('/', function (req, res) {
-
-
 	res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-var drawings= {}; 
-var nsps = {};
 
+var drawings= {}, nsps = {}; 
 app.get('/:room', function (req, res){
 	var room = '/'+req.params.room.toString();
 	drawings[room] = drawings[room] || [];
 	res.sendFile(path.join(__dirname, 'index.html'));
 	nsps[room] = nsps[room] || io.of(room);
 	nsps[room].on('connection',function(socket){
-		socket.broadcast.emit('drawAll', drawings[room]);
-		socket.emit('drawAll', drawings[room]);
+		if (drawings[room]) {
+			socket.broadcast.emit('drawAll', drawings[room]);
+			socket.emit('drawAll', drawings[room]);
+		}
 		socket.on('disconnect',function(){
 		})
 		socket.on('draw',function(start,end,strokeColor){
