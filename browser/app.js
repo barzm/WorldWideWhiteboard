@@ -17,5 +17,5 @@ socket.on('drawAll', function(drawingsArr) {
 	});
 })
 socket.on('clearAll', function(drawingsArr) {
-	whiteboard.clear()
+	canvas.ctx.clearRect ( 0 , 0 , canvas.width, canvas.height );
 })
