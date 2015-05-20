@@ -75,9 +75,9 @@ window.whiteboard = new window.EventEmitter();
 
     });
 
-    whiteboard.clear = function(){
-        console.log("clearing whiteboard"); 
-        whiteboard.emit('clear');
+    whiteboard.clear = function(broadcast){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (broadcast) whiteboard.emit('clear');
     }
 
     whiteboard.draw = function (start, end, strokeColor, shouldBroadcast) {

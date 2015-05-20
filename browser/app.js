@@ -17,7 +17,5 @@ socket.on('drawAll', function(drawingsArr) {
 	});
 })
 socket.on('clearAll', function(drawingsArr) {
-	drawingsArr.forEach(function(drawData) {
-		whiteboard.draw(drawData[0], drawData[1], "white", false);
-	})
+	whiteboard.clear()
 })

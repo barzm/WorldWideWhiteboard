@@ -32,7 +32,6 @@ app.get('/:room', function (req, res){
 			socket.broadcast.emit('draw',start,end,strokeColor,false); 
 		})
 		socket.on('clear',function(){
-			socket.emit('clearAll',drawings[room]); 
 			socket.broadcast.emit('clearAll',drawings[room]); 
 			drawings[room] = []; 
 		})
