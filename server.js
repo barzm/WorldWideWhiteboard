@@ -3,37 +3,42 @@ var express= require('express');
 var app = express(); 
 var server = require('http').Server(app); 
 var io = require('socket.io')(server); 
+var bodyparser = require('body-parser');
 
 server.listen(1337, function () {
-	console.log('The server is listening on port 1337!');
 });
-
+app.use(bodyparser.urlencoded({extended:false}))
 app.use(express.static(path.join(__dirname, 'browser')));
 
+
 app.get('/', function (req, res) {
+
 
 	res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-var drawings= []; 
+var drawings= {}; 
+var nsps = {};
 
-io.on('connection',function(socket){
-	socket.emit('drawAll', drawings)
-	console.log("A new client has connnected."); 
-	socket.on('disconnect',function(){
-		console.log("Client has disconnected"); 
-	})
-	socket.on('draw',function(start,end,strokeColor){
-		console.log("server sees drawing"); 
-		// console.log(start,end,strokeColor);
-		drawings.push([start,end,strokeColor,false]); 
-
-		socket.broadcast.emit('draw',start,end,strokeColor); 
-	})
-	socket.on('clear',function(){
-		console.log("server clear"); 
-		socket.emit('clearAll',drawings); 
-		socket.broadcast.emit('clearAll',drawings); 
-		drawings = []; 
+app.get('/:room', function (req, res){
+	var room = '/'+req.params.room.toString();
+	drawings[room] = drawings[room] || [];
+	res.sendFile(path.join(__dirname, 'index.html'));
+	nsps[room] = nsps[room] || io.of(room);
+	nsps[room].on('connection',function(socket){
+		socket.broadcast.emit('drawAll', drawings[room]);
+		socket.emit('drawAll', drawings[room]);
+		socket.on('disconnect',function(){
+		})
+		socket.on('draw',function(start,end,strokeColor){
+			drawings[room].push([start,end,strokeColor,false]); 
+			socket.broadcast.emit('draw',start,end,strokeColor,false); 
+		})
+		socket.on('clear',function(){
+			socket.emit('clearAll',drawings[room]); 
+			socket.broadcast.emit('clearAll',drawings[room]); 
+			drawings[room] = []; 
+		})
 	})
 })
+

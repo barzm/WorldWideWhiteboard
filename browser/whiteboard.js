@@ -37,6 +37,7 @@ window.whiteboard = new window.EventEmitter();
     ctx.lineWidth = 5;
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
+    ctx.imageSmoothingEnabled = true;
 
     var currentMousePosition = {
         x: 0,
@@ -93,6 +94,7 @@ window.whiteboard = new window.EventEmitter();
         // If shouldBroadcast is truthy, we will emit a draw event to listeners
         // with the start, end and color data.
         if (shouldBroadcast) {
+            strokeColor = strokeColor || 'black';
             whiteboard.emit('draw', start, end, strokeColor);
         }
         
